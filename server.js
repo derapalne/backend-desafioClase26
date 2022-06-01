@@ -65,6 +65,7 @@ app.use(passport.session());
 app.use((req, res, next) => {
     app.locals.registerMessage = req.flash("registerMessage");
     app.locals.loginMessage = req.flash("loginMessage");
+    console.log(req.session.email);
     next();
 });
 
@@ -87,8 +88,8 @@ app.set("view engine", "ejs");
 
 app.get("/", async (req, res) => {
     try {
-        console.log('image.png')
-
+        console.log("image.png");
+        console.log(req.session);
         const productos = await archProductos.getAll();
         const mensajes = await archMensajes.read();
         res.status(200).render("productosForm", {
@@ -116,7 +117,6 @@ app.get("/api/productos-test", async (req, res) => {
 
 app.get("/login", (req, res) => {
     try {
-
         // Pensé en hacer un middleware para esto pero no lo vi necesario ya
         // que sería lo opuesto al middleware que ya tengo (isLogged)
         if (req.session.email) {
@@ -158,7 +158,7 @@ app.post(
         passReqToCallback: true,
     }),
     (req, res) => {
-        console.log('image.png')
+        res.send(req.usuario);
     }
 );
 

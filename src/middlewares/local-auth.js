@@ -5,11 +5,11 @@ import Usuario from "../models/usuario.model.js";
 import bcrypt from 'bcrypt';
 
 passport.serializeUser((usuario, done) => {
-    done(null, usuario.id);
+    done(null, usuario._id);
 });
 
 passport.deserializeUser(async (id, done) => {
-    const usuario = await Usuario.findById(id);
+    const usuario = await Usuario.findById(_id);
     done(null, usuario);
 });
 
@@ -32,7 +32,7 @@ passport.use(
             } else {
                 const nuevoUsuario = new Usuario();
                 nuevoUsuario.email = email;
-                nuevoUsuario.password = await nuevoUsuario.encryptPass(password);
+                nuevoUsuario.password = await bcrypt.hash(password, 10);
                 await nuevoUsuario.save();
                 done(null, nuevoUsuario);
             }
@@ -58,7 +58,8 @@ passport.use(
                 done(null, false, req.flash("loginMessage", "Credenciales incorrectas"));
             }
             req.session.email = email;
-            done(null, usuario);
+            console.log(req.session);
+            done(null, usuario, req.flash('email',email));
         }
     )
 );
