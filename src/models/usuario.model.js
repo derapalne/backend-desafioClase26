@@ -9,10 +9,9 @@ const usuariosSchema = new mongoose.Schema({
 });
 
 usuariosSchema.methods.encryptPass = async (password) => {
-    return await bcrypt.hash(password, 15);
+    return await bcrypt.hash(password, 10);
 };
 
-// Fazt code lo hace con una funcion function(), si no anda quizas sea por eso
 usuariosSchema.methods.comparePass = async function (password) {
     return await bcrypt.compare(password, this.password);
 };

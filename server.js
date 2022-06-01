@@ -65,7 +65,6 @@ app.use(passport.session());
 app.use((req, res, next) => {
     app.locals.registerMessage = req.flash("registerMessage");
     app.locals.loginMessage = req.flash("loginMessage");
-    console.log(req.session.email);
     next();
 });
 
@@ -86,7 +85,7 @@ app.set("view engine", "ejs");
 
 // [ --------- RUTAS --------- ] //
 
-app.get("/", async (req, res) => {
+app.get("/", isLogged, async (req, res) => {
     try {
         console.log("image.png");
         console.log(req.session);
@@ -119,7 +118,7 @@ app.get("/login", (req, res) => {
     try {
         // Pensé en hacer un middleware para esto pero no lo vi necesario ya
         // que sería lo opuesto al middleware que ya tengo (isLogged)
-        if (req.session.email) {
+        if (req.session.passport.user) {
             res.redirect("/");
         } else {
             res.status(200).render("login", { error: app.locals.loginMessage });
@@ -130,7 +129,7 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-    if (req.session.email) {
+    if (req.session.passport.user) {
         res.status(200).redirect("/");
     }
     res.status(200).render("register", { error: app.locals.registerMessage });
@@ -157,9 +156,7 @@ app.post(
         failureRedirect: "/login",
         passReqToCallback: true,
     }),
-    (req, res) => {
-        res.send(req.usuario);
-    }
+    (req, res) => {}
 );
 
 app.post("/logout", isLogged, (req, res) => {
