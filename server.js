@@ -62,10 +62,17 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
+app.use((err, req, res, next) => {
     app.locals.registerMessage = req.flash("registerMessage");
     app.locals.loginMessage = req.flash("loginMessage");
-    next();
+    app.locals.email = req.flash("email");
+    console.log(err);
+    // Acá traté de manejar los 404 not found pero no entendí muy bien cómo :p
+    if (err instanceof NotFound) {
+        res.render("404");
+    } else {
+        next(err);
+    }
 });
 
 // >>>>>DBs
@@ -87,14 +94,12 @@ app.set("view engine", "ejs");
 
 app.get("/", isLogged, async (req, res) => {
     try {
-        console.log("image.png");
-        console.log(req.session);
         const productos = await archProductos.getAll();
         const mensajes = await archMensajes.read();
         res.status(200).render("productosForm", {
             prods: productos,
             mensajes: mensajes,
-            email: req.session.email,
+            email: req.user.email,
         });
     } catch (e) {
         res.status(500).send(e);
@@ -116,9 +121,7 @@ app.get("/api/productos-test", async (req, res) => {
 
 app.get("/login", (req, res) => {
     try {
-        // Pensé en hacer un middleware para esto pero no lo vi necesario ya
-        // que sería lo opuesto al middleware que ya tengo (isLogged)
-        if (req.session.passport.user) {
+        if (req.user) {
             res.redirect("/");
         } else {
             res.status(200).render("login", { error: app.locals.loginMessage });
@@ -161,7 +164,7 @@ app.post(
 
 app.post("/logout", isLogged, (req, res) => {
     try {
-        const email = req.session.email;
+        const email = req.user.email;
         req.session.destroy((err) => {
             res.status(200).render("logout", { nombreUsuario: email });
         });
@@ -169,6 +172,7 @@ app.post("/logout", isLogged, (req, res) => {
         res.status(500).send(e);
     }
 });
+
 // [ --------- CORRER EL SERVIDOR --------- ] //
 
 const PORT = 8080;

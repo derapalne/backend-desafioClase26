@@ -55,11 +55,10 @@ passport.use(
             }
             const passOk = await bcrypt.compare(password, usuario.password);
             if (!passOk) {
-                console.log("hola",req.session);
                 return done(null, false, req.flash("loginMessage", "Credenciales incorrectas"));
             }
-            req.session.email = email;
-            console.log(req.session);
+            // req.session.email = email;
+            // console.log(req.session);
             return done(null, usuario, req.flash('email', email));
         }
     )

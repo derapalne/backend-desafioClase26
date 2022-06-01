@@ -66,6 +66,11 @@
     #login {
       background-image: url('./images/backLogin.png');
     }
+
+    .ingresoProductos {
+      background-color: unset;
+      border: 0;
+    }
   </style>
 </head>
 
@@ -81,14 +86,24 @@
     <div id="ingresoProductos" class="contenedor">
       <h1>Ingrese los productos por favor</h1>
       <form>
-        <label for="title">Título</label>
-        <input type="text" name="title" id="title" /> <br />
+        <table class="ingresoProductos">
+          <tr>
+            <td class="ingresoProductos"> <label for="title">Título</label></td>
+            <td class="ingresoProductos"><input type="text" name="title" id="title" /> </td>
+          </tr>
+          <tr>
+            <td class="ingresoProductos"><label for="price">Precio</label></td>
+            <td class="ingresoProductos"><input type="number" name="price" id="price" /> </td>
+          </tr>
+          <tr>
+            <td class="ingresoProductos"> <label for="thumbnail">Thumbnail</label></td>
+            <td class="ingresoProductos"><input type="text" name="thumbnail" id="thumbnail" /></td>
+          </tr>
+        </table>
 
-        <label for="price">Precio</label>
-        <input type="number" name="price" id="price" /> <br />
 
-        <label for="thumbnail">Thumbnail</label>
-        <input type="text" name="thumbnail" id="thumbnail" /> <br />
+
+
 
         <input type="submit" id="agregar" value="Agregar" />
       </form>
